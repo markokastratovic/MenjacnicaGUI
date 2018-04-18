@@ -31,6 +31,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import javax.swing.JPopupMenu;
+import java.awt.Component;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class MenjacnicaGUI extends JFrame {
 
@@ -55,6 +59,11 @@ public class MenjacnicaGUI extends JFrame {
 	private JMenuItem mntmExit;
 	private JMenuItem mntmAbout;
 
+	private MenjacnicaGUI mg;
+	private JPopupMenu popupMenu;
+	private JMenuItem mntmDodajKurs;
+	private JMenuItem mntmObrisiKurs;
+	private JMenuItem mntmIzvrsiZamenu;
 	/**
 	 * Launch the application.
 	 */
@@ -84,7 +93,7 @@ public class MenjacnicaGUI extends JFrame {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(MenjacnicaGUI.class
 				.getResource("/com/sun/javafx/scene/control/skin/modena/HTMLEditor-Indent-Black-rtl.png")));
 		setTitle("Menjacnica");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setBounds(100, 100, 625, 397);
 		setJMenuBar(getMenuBar_1());
 		contentPane = new JPanel();
@@ -94,6 +103,7 @@ public class MenjacnicaGUI extends JFrame {
 		contentPane.add(getPanel(), BorderLayout.EAST);
 		contentPane.add(getScrollPane(), BorderLayout.CENTER);
 		contentPane.add(getScrollPane_1(), BorderLayout.SOUTH);
+		this.mg=this;
 	}
 
 	private JPanel getPanel() {
@@ -114,6 +124,13 @@ public class MenjacnicaGUI extends JFrame {
 	private JButton getBtnDodajKurs() {
 		if (btnDodajKurs == null) {
 			btnDodajKurs = new JButton("Dodaj kurs");
+			btnDodajKurs.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					DodajKursGUI dk=new DodajKursGUI(mg);
+					dk.setVisible(true);
+					
+				}
+			});
 		}
 		return btnDodajKurs;
 	}
@@ -177,6 +194,7 @@ public class MenjacnicaGUI extends JFrame {
 							{ null, null, null, null, null, null }, { null, null, null, null, null, null },
 							{ null, null, null, null, null, null }, { null, null, null, null, null, null }, },
 					new String[] { "Sifra", "Skraceni naziv", "Prodajni", "Srednji", "Kupovni", "Naziv" }));
+			addPopup(table, getPopupMenu());
 		}
 		return table;
 	}
@@ -272,7 +290,7 @@ public class MenjacnicaGUI extends JFrame {
 
 	private void izlaz() {
 		int opcija = JOptionPane.showConfirmDialog(null, "Da li zelite da izadjete?", "Izlazak",
-				JOptionPane.YES_NO_OPTION);
+				JOptionPane.YES_NO_CANCEL_OPTION);
 		if (opcija == JOptionPane.YES_OPTION)
 			System.exit(0);
 	}
@@ -283,7 +301,7 @@ public class MenjacnicaGUI extends JFrame {
 			mntmAbout.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					JOptionPane.showMessageDialog(null,
-							"Aplikacija biblioteka, autor Marko Kastratovic",
+							"Aplikacija menjacnica, autor Marko Kastratovic",
 							"O programu",
 							JOptionPane.INFORMATION_MESSAGE);
 				}
@@ -291,5 +309,59 @@ public class MenjacnicaGUI extends JFrame {
 			mntmAbout.setIcon(new ImageIcon(MenjacnicaGUI.class.getResource("/javax/swing/plaf/metal/icons/Inform.gif")));
 		}
 		return mntmAbout;
+	}
+	public void ispisiNaKraj(String s) {
+		textArea.setText(textArea.getText() + "\n" + s);
+	}
+	private JPopupMenu getPopupMenu() {
+		if (popupMenu == null) {
+			popupMenu = new JPopupMenu();
+			popupMenu.add(getMntmDodajKurs());
+			popupMenu.add(getMntmObrisiKurs());
+			popupMenu.add(getMntmIzvrsiZamenu());
+		}
+		return popupMenu;
+	}
+	private static void addPopup(Component component, final JPopupMenu popup) {
+		component.addMouseListener(new MouseAdapter() {
+			public void mousePressed(MouseEvent e) {
+				if (e.isPopupTrigger()) {
+					showMenu(e);
+				}
+			}
+			public void mouseReleased(MouseEvent e) {
+				if (e.isPopupTrigger()) {
+					showMenu(e);
+				}
+			}
+			private void showMenu(MouseEvent e) {
+				popup.show(e.getComponent(), e.getX(), e.getY());
+			}
+		});
+	}
+	private JMenuItem getMntmDodajKurs() {
+		if (mntmDodajKurs == null) {
+			mntmDodajKurs = new JMenuItem("Dodaj kurs");
+			mntmDodajKurs.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					DodajKursGUI dk=new DodajKursGUI(mg);
+					dk.setVisible(true);
+				
+				}
+			});
+		}
+		return mntmDodajKurs;
+	}
+	private JMenuItem getMntmObrisiKurs() {
+		if (mntmObrisiKurs == null) {
+			mntmObrisiKurs = new JMenuItem("Obrisi kurs");
+		}
+		return mntmObrisiKurs;
+	}
+	private JMenuItem getMntmIzvrsiZamenu() {
+		if (mntmIzvrsiZamenu == null) {
+			mntmIzvrsiZamenu = new JMenuItem("Izvrsi zamenu");
+		}
+		return mntmIzvrsiZamenu;
 	}
 }
